@@ -75,6 +75,7 @@ public class LDAPConstants {
     public static final String EDIT_MODE = "editMode";
 
     public static final String VALIDATE_PASSWORD_POLICY = "validatePasswordPolicy";
+    public static final String VALIDATE_USERNAME_POLICY = "validateUsernamePolicy";
 
     public static final String TRUST_EMAIL = "trustEmail";
 

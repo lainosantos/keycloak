@@ -380,6 +380,9 @@ public class ModelToRepresentation {
         if (realm.getPasswordPolicy() != null) {
             rep.setPasswordPolicy(realm.getPasswordPolicy().toString());
         }
+        if (realm.getUsernamePolicy() != null) {
+            rep.setUsernamePolicy(realm.getUsernamePolicy().toString());
+        }
         OTPPolicy otpPolicy = realm.getOTPPolicy();
         rep.setOtpPolicyAlgorithm(otpPolicy.getAlgorithm());
         rep.setOtpPolicyPeriod(otpPolicy.getPeriod());

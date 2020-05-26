@@ -84,6 +84,9 @@ public class RealmEntity {
     @Column(name="PASSWORD_POLICY")
     protected String passwordPolicy;
 
+    @Column(name="USERNAME_POLICY")
+    protected String usernamePolicy;
+
     @Column(name="OTP_POLICY_TYPE")
     protected String otpPolicyType;
     @Column(name="OTP_POLICY_ALG")
@@ -482,6 +485,14 @@ public class RealmEntity {
 
     public void setPasswordPolicy(String passwordPolicy) {
         this.passwordPolicy = passwordPolicy;
+    }
+
+    public String getUsernamePolicy() {
+        return usernamePolicy;
+    }
+
+    public void setUsernamePolicy(String usernamePolicy) {
+        this.usernamePolicy = usernamePolicy;
     }
 
     public String getLoginTheme() {

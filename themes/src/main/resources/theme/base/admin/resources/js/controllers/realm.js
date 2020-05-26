@@ -610,6 +610,93 @@ module.controller('RealmPasswordPolicyCtrl', function($scope, Realm, realm, $htt
     };
 });
 
+module.controller('RealmUsernamePolicyCtrl', function($scope, Realm, realm, $http, $location, $route, Dialog, Notifications, serverInfo) {
+    var parse = function(policyString) {
+        var policies = [];
+        if (!policyString || policyString.length == 0){
+            return policies;
+        }
+
+        var policyArray = policyString.split(" and ");
+
+        for (var i = 0; i < policyArray.length; i ++){
+            var policyToken = policyArray[i];
+            var id;
+            var value;
+            if (policyToken.indexOf('(') == -1) {
+                id = policyToken.trim();
+                value = null;
+            } else {
+                id = policyToken.substring(0, policyToken.indexOf('('));
+                value = policyToken.substring(policyToken.indexOf('(') + 1, policyToken.lastIndexOf(')')).trim();
+            }
+
+            for (var j = 0; j < serverInfo.usernamePolicies.length; j++) {
+                if (serverInfo.usernamePolicies[j].id == id) {
+                    // clone
+                    var p = JSON.parse(JSON.stringify(serverInfo.usernamePolicies[j]));
+
+                    p.value = value && value || p.defaultValue;
+                    policies.push(p);
+                }
+            }
+        }
+        return policies;
+    };
+
+    var toString = function(policies) {
+        if (!policies || policies.length == 0) {
+            return "";
+        }
+        var policyString = "";
+        for (var i = 0; i < policies.length; i++) {
+            policyString += policies[i].id + '(' + policies[i].value + ')';
+            if (i != policies.length - 1) {
+                policyString += ' and ';
+            }
+        }
+        return policyString;
+    }
+
+    $scope.realm = realm;
+    $scope.serverInfo = serverInfo;
+
+    $scope.changed = false;
+    console.log(JSON.stringify(parse(realm.usernamePolicy)));
+    $scope.policy = parse(realm.usernamePolicy);
+    var oldCopy = angular.copy($scope.policy);
+
+    $scope.$watch('policy', function() {
+        $scope.changed = ! angular.equals($scope.policy, oldCopy);
+    }, true);
+
+    $scope.addPolicy = function(policy){
+        policy.value = policy.defaultValue;
+        if (!$scope.policy) {
+            $scope.policy = [];
+        }
+        $scope.policy.push(policy);
+    }
+
+    $scope.removePolicy = function(index){
+        $scope.policy.splice(index, 1);
+    }
+
+    $scope.save = function() {
+        $scope.realm.usernamePolicy = toString($scope.policy);
+        console.log($scope.realm.usernamePolicy);
+
+        Realm.update($scope.realm, function () {
+            $route.reload();
+            Notifications.success("Your changes have been saved to the realm.");
+        });
+    };
+
+    $scope.reset = function() {
+        $route.reload();
+    };
+});
+
 module.controller('RealmDefaultRolesCtrl', function ($scope, $route, Realm, realm, roles, Notifications, ClientRole, Client) {
 
     console.log('RealmDefaultRolesCtrl');

@@ -101,6 +101,7 @@ public class RealmRepresentation {
     @Deprecated
     protected Set<String> requiredCredentials;
     protected String passwordPolicy;
+    protected String usernamePolicy;
     protected String otpPolicyType;
     protected String otpPolicyAlgorithm;
     protected Integer otpPolicyInitialCounter;
@@ -422,6 +423,14 @@ public class RealmRepresentation {
 
     public void setPasswordPolicy(String passwordPolicy) {
         this.passwordPolicy = passwordPolicy;
+    }
+
+    public String getUsernamePolicy() {
+        return usernamePolicy;
+    }
+
+    public void setUsernamePolicy(String usernamePolicy) {
+        this.usernamePolicy = usernamePolicy;
     }
 
     public Integer getAccessCodeLifespan() {

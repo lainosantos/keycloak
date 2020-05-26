@@ -29,6 +29,7 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.models.RoleModel;
 import org.keycloak.models.utils.ModelToRepresentation;
 import org.keycloak.policy.PasswordPolicyNotMetException;
+import org.keycloak.policy.UsernamePolicyNotMetException;
 import org.keycloak.protocol.oidc.TokenManager;
 import org.keycloak.representations.idm.RealmRepresentation;
 import org.keycloak.services.ErrorResponse;
@@ -146,6 +147,9 @@ public class RealmsAdminResource {
         } catch (ModelDuplicateException e) {
             logger.error("Conflict detected", e);
             return ErrorResponse.exists("Conflict detected. See logs for details");
+        } catch (UsernamePolicyNotMetException e) {
+            logger.error("Username policy not met for user " + e.getUsername(), e);
+            return ErrorResponse.error("Username policy not met. See logs for details", Response.Status.BAD_REQUEST);
         } catch (PasswordPolicyNotMetException e) {
             logger.error("Password policy not met for user " + e.getUsername(), e);
             if (session.getTransactionManager().isActive()) session.getTransactionManager().setRollbackOnly();

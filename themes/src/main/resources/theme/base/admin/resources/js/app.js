@@ -1987,6 +1987,18 @@ module.config([ '$routeProvider', function($routeProvider) {
             },
             controller : 'RealmPasswordPolicyCtrl'
         })
+        .when('/realms/:realm/authentication/username-policy', {
+            templateUrl : resourceUrl + '/partials/username-policy.html',
+            resolve : {
+                realm : function(RealmLoader) {
+                    return RealmLoader();
+                },
+                serverInfo : function(ServerInfoLoader) {
+                    return ServerInfoLoader();
+                }
+            },
+            controller : 'RealmUsernamePolicyCtrl'
+        })
         .when('/realms/:realm/authentication/otp-policy', {
             templateUrl : resourceUrl + '/partials/otp-policy.html',
             resolve : {

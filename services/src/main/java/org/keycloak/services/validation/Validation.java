@@ -24,6 +24,7 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.models.utils.FormMessage;
 import org.keycloak.policy.PasswordPolicyManagerProvider;
 import org.keycloak.policy.PolicyError;
+import org.keycloak.policy.UsernamePolicyManagerProvider;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.services.messages.Messages;
 
@@ -46,9 +47,17 @@ public class Validation {
 
     public static List<FormMessage> validateRegistrationForm(KeycloakSession session, RealmModel realm, MultivaluedMap<String, String> formData, List<String> requiredCredentialTypes, PasswordPolicy policy) {
         List<FormMessage> errors = new ArrayList<>();
+        String username = formData.getFirst(FIELD_USERNAME);
 
-        if (!realm.isRegistrationEmailAsUsername() && isBlank(formData.getFirst(FIELD_USERNAME))) {
-            addError(errors, FIELD_USERNAME, Messages.MISSING_USERNAME);
+        if (!realm.isRegistrationEmailAsUsername()) {
+            if (isBlank(username)) {
+                addError(errors, FIELD_USERNAME, Messages.MISSING_USERNAME);
+            } else {
+                PolicyError err = session.getProvider(UsernamePolicyManagerProvider.class).validate(realm, formData.getFirst(FIELD_USERNAME));
+
+                if (err != null)
+                    errors.add(new FormMessage(FIELD_USERNAME, err.getMessage(), err.getParameters()));
+            }
         }
 
         if (isBlank(formData.getFirst(FIELD_FIRST_NAME))) {
@@ -86,13 +95,24 @@ public class Validation {
         errors.add(new FormMessage(field, message));
     }
 
-    public static List<FormMessage> validateUpdateProfileForm(RealmModel realm, MultivaluedMap<String, String> formData) {
-        return validateUpdateProfileForm(realm, formData, realm.isEditUsernameAllowed());
+    public static List<FormMessage> validateUpdateProfileForm(KeycloakSession session, RealmModel realm, MultivaluedMap<String, String> formData) {
+        return validateUpdateProfileForm(session, realm, formData, realm.isEditUsernameAllowed());
     }
-    
-    public static List<FormMessage> validateUpdateProfileForm(RealmModel realm, MultivaluedMap<String, String> formData, boolean userNameRequired) {
+
+    public static List<FormMessage> validateUpdateProfileForm(KeycloakSession session, RealmModel realm, MultivaluedMap<String, String> formData, boolean userNameRequired) {
         List<FormMessage> errors = new ArrayList<>();
-        
+
+        if (!realm.isRegistrationEmailAsUsername() && userNameRequired) {
+            if (isBlank(formData.getFirst(FIELD_USERNAME))) {
+                addError(errors, FIELD_USERNAME, Messages.MISSING_USERNAME);
+            } else {
+                PolicyError err = session.getProvider(UsernamePolicyManagerProvider.class).validate(realm, formData.getFirst(FIELD_USERNAME));
+
+                if (err != null)
+                    errors.add(new FormMessage(FIELD_USERNAME, err.getMessage(), err.getParameters()));
+            }
+        }
+
         if (!realm.isRegistrationEmailAsUsername() && userNameRequired && isBlank(formData.getFirst(FIELD_USERNAME))) {
             addError(errors, FIELD_USERNAME, Messages.MISSING_USERNAME);
         }

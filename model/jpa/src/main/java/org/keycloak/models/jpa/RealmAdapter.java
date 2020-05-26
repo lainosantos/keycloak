@@ -52,6 +52,7 @@ public class RealmAdapter implements RealmModel, JpaModel<RealmEntity> {
     }
 
     private PasswordPolicy passwordPolicy;
+    private UsernamePolicy usernamePolicy;
     private OTPPolicy otpPolicy;
 
     public RealmAdapter(KeycloakSession session, EntityManager em, RealmEntity realm) {
@@ -943,6 +944,21 @@ public class RealmAdapter implements RealmModel, JpaModel<RealmEntity> {
     public void setPasswordPolicy(PasswordPolicy policy) {
         this.passwordPolicy = policy;
         realm.setPasswordPolicy(policy.toString());
+        em.flush();
+    }
+
+    @Override
+    public UsernamePolicy getUsernamePolicy() {
+        if (usernamePolicy == null) {
+            usernamePolicy = UsernamePolicy.parse(session, realm.getUsernamePolicy());
+        }
+        return usernamePolicy;
+    }
+
+    @Override
+    public void setUsernamePolicy(UsernamePolicy policy) {
+        this.usernamePolicy = policy;
+        realm.setUsernamePolicy(policy.toString());
         em.flush();
     }
 

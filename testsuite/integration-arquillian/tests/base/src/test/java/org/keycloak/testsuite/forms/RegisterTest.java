@@ -227,6 +227,50 @@ public class RegisterTest extends AbstractTestRealmKeycloakTest {
         }
     }
 
+    // TODO
+    @Test
+    public void registerUsernamePolicy() {
+        /*keycloakRule.configure(new KeycloakRule.KeycloakSetup() {
+            @Override
+            public void config(RealmManager manager, RealmModel adminstrationRealm, RealmModel appRealm) {
+                appRealm.setPasswordPolicy(new PasswordPolicy("length"));
+            }
+        });*/
+        RealmRepresentation realm = testRealm().toRepresentation();
+        realm.setUsernamePolicy("regexPattern(^[^\\<\\>\\\\\\/]*$)");
+        testRealm().update(realm);
+
+        try {
+            loginPage.open();
+            loginPage.clickRegister();
+            registerPage.assertCurrent();
+
+            registerPage.register("firstName", "lastName", "registerPasswordPolicy@email", "registerPasswordPolicy\\", "pass", "pass");
+
+            registerPage.assertCurrent();
+            assertEquals("Invalid password: minimum length 8.", registerPage.getError());
+
+            events.expectRegister("registerPasswordPolicy", "registerPasswordPolicy@email")
+                    .removeDetail(Details.USERNAME)
+                    .removeDetail(Details.EMAIL)
+                    .user((String) null).error("invalid_registration").assertEvent();
+
+            registerPage.register("firstName", "lastName", "registerPasswordPolicy@email", "registerPasswordPolicy", "password", "password");
+            assertEquals(RequestType.AUTH_RESPONSE, appPage.getRequestType());
+
+            String userId = events.expectRegister("registerPasswordPolicy", "registerPasswordPolicy@email").assertEvent().getUserId();
+
+            events.expectLogin().user(userId).detail(Details.USERNAME, "registerpasswordpolicy").assertEvent();
+        } finally {
+            /*keycloakRule.configure(new KeycloakRule.KeycloakSetup() {
+                @Override
+                public void config(RealmManager manager, RealmModel adminstrationRealm, RealmModel appRealm) {
+                    appRealm.setPasswordPolicy(new PasswordPolicy(null));
+                }
+            });*/
+        }
+    }
+
     @Test
     public void registerUserMissingUsername() {
         loginPage.open();

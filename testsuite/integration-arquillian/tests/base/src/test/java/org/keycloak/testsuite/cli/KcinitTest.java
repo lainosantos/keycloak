@@ -29,15 +29,7 @@ import org.keycloak.authorization.model.Policy;
 import org.keycloak.authorization.model.ResourceServer;
 import org.keycloak.common.Profile;
 import org.keycloak.credential.CredentialModel;
-import org.keycloak.models.AuthenticationExecutionModel;
-import org.keycloak.models.AuthenticationFlowBindings;
-import org.keycloak.models.AuthenticationFlowModel;
-import org.keycloak.models.ClientModel;
-import org.keycloak.models.PasswordPolicy;
-import org.keycloak.models.RealmModel;
-import org.keycloak.models.RequiredActionProviderModel;
-import org.keycloak.models.UserCredentialModel;
-import org.keycloak.models.UserModel;
+import org.keycloak.models.*;
 import org.keycloak.models.credential.OTPCredentialModel;
 import org.keycloak.models.utils.DefaultAuthenticationFlows;
 import org.keycloak.models.utils.TimeBasedOTP;
@@ -135,6 +127,9 @@ public class KcinitTest extends AbstractTestRealmKeycloakTest {
             PasswordPolicy policy = realm.getPasswordPolicy();
             policy = PasswordPolicy.parse(session, "hashIterations(1)");
             realm.setPasswordPolicy(policy);
+            UsernamePolicy usernamePolicy = realm.getUsernamePolicy();
+            usernamePolicy = UsernamePolicy.parse(session, "hashIterations(1)");
+            realm.setUsernamePolicy(usernamePolicy);
 
             UserModel user = session.users().addUser(realm, "bburke");
             session.userCredentialManager().updateCredential(realm, user, UserCredentialModel.password("password"));

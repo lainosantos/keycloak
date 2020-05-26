@@ -33,6 +33,8 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserConsentModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.UserSessionModel;
+import org.keycloak.policy.PolicyError;
+import org.keycloak.policy.UsernamePolicyManagerProvider;
 import org.keycloak.representations.account.ClientRepresentation;
 import org.keycloak.representations.account.ConsentRepresentation;
 import org.keycloak.representations.account.ConsentScopeRepresentation;
@@ -163,6 +165,12 @@ public class AccountRestService {
             boolean usernameChanged = userRep.getUsername() != null && !userRep.getUsername().equals(user.getUsername());
             if (realm.isEditUsernameAllowed()) {
                 if (usernameChanged) {
+                    PolicyError err = session.getProvider(UsernamePolicyManagerProvider.class).validate(realm, userRep.getUsername());
+
+                    if (err != null) {
+                        return ErrorResponse.error(err.getMessage(), err.getParameters(), Response.Status.BAD_REQUEST);
+                    }
+
                     UserModel existing = session.users().getUserByUsername(userRep.getUsername(), realm);
                     if (existing != null) {
                         return ErrorResponse.exists(Messages.USERNAME_EXISTS);

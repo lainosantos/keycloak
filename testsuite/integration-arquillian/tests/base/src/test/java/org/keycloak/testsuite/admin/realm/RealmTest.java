@@ -237,6 +237,26 @@ public class RealmTest extends AbstractAdminTest {
     }
 
     @Test
+    public void createRealmCheckDefaultUsernamePolicy() {
+        RealmRepresentation rep = new RealmRepresentation();
+        rep.setRealm("new-realm");
+
+        adminClient.realms().create(rep);
+
+        assertEquals(null, adminClient.realm("new-realm").toRepresentation().getUsernamePolicy());
+
+        adminClient.realms().realm("new-realm").remove();
+
+        rep.setUsernamePolicy("regexPattern(^[^\\<\\>\\\\\\/]*$)");
+
+        adminClient.realms().create(rep);
+
+        assertEquals("regexPattern(^[^\\<\\>\\\\\\/]*$)", adminClient.realm("new-realm").toRepresentation().getUsernamePolicy());
+
+        adminClient.realms().realm("new-realm").remove();
+    }
+
+    @Test
     public void createRealmFromJson() {
         RealmRepresentation rep = loadJson(getClass().getResourceAsStream("/admin-test/testrealm.json"), RealmRepresentation.class);
         adminClient.realms().create(rep);

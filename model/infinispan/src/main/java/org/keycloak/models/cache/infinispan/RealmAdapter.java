@@ -635,6 +635,18 @@ public class RealmAdapter implements CachedRealmModel {
     }
 
     @Override
+    public UsernamePolicy getUsernamePolicy() {
+        if (isUpdated()) return updated.getUsernamePolicy();
+        return cached.getUsernamePolicy();
+    }
+
+    @Override
+    public void setUsernamePolicy(UsernamePolicy policy) {
+        getDelegateForUpdate();
+        updated.setUsernamePolicy(policy);
+    }
+
+    @Override
     public OTPPolicy getOTPPolicy() {
         if (isUpdated()) return updated.getOTPPolicy();
         return cached.getOtpPolicy();

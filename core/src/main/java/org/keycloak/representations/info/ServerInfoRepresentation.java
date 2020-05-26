@@ -17,10 +17,7 @@
 
 package org.keycloak.representations.info;
 
-import org.keycloak.representations.idm.ComponentTypeRepresentation;
-import org.keycloak.representations.idm.PasswordPolicyTypeRepresentation;
-import org.keycloak.representations.idm.ProtocolMapperRepresentation;
-import org.keycloak.representations.idm.ProtocolMapperTypeRepresentation;
+import org.keycloak.representations.idm.*;
 
 import java.util.List;
 import java.util.Map;
@@ -48,6 +45,7 @@ public class ServerInfoRepresentation {
     private Map<String, List<ComponentTypeRepresentation>> componentTypes;
 
     private List<PasswordPolicyTypeRepresentation> passwordPolicies;
+    private List<UsernamePolicyTypeRepresentation> usernamePolicies;
 
     private Map<String, List<String>> enums;
 
@@ -153,6 +151,14 @@ public class ServerInfoRepresentation {
 
     public void setPasswordPolicies(List<PasswordPolicyTypeRepresentation> passwordPolicies) {
         this.passwordPolicies = passwordPolicies;
+    }
+
+    public List<UsernamePolicyTypeRepresentation> getUsernamePolicies() {
+        return usernamePolicies;
+    }
+
+    public void setUsernamePolicies(List<UsernamePolicyTypeRepresentation> usernamePolicies) {
+        this.usernamePolicies = usernamePolicies;
     }
 
     public Map<String, List<ComponentTypeRepresentation>> getComponentTypes() {

@@ -66,6 +66,8 @@ org.keycloak.models.cache.authorization.CachedStoreFactorySpi
 org.keycloak.protocol.oidc.TokenIntrospectionSpi
 org.keycloak.policy.PasswordPolicySpi
 org.keycloak.policy.PasswordPolicyManagerSpi
+org.keycloak.policy.UsernamePolicySpi
+org.keycloak.policy.UsernamePolicyManagerSpi
 org.keycloak.transaction.TransactionManagerLookupSpi
 org.keycloak.credential.hash.PasswordHashSpi
 org.keycloak.credential.CredentialSpi

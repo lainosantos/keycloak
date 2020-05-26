@@ -45,6 +45,8 @@ import org.keycloak.models.utils.ReadOnlyUserModelDelegate;
 import org.keycloak.policy.PasswordPolicyManagerProvider;
 import org.keycloak.policy.PolicyError;
 import org.keycloak.models.cache.UserCache;
+import org.keycloak.policy.UsernamePolicyManagerProvider;
+import org.keycloak.policy.UsernamePolicyNotMetException;
 import org.keycloak.storage.ReadOnlyException;
 import org.keycloak.storage.StorageId;
 import org.keycloak.storage.UserStorageProvider;
@@ -509,6 +511,16 @@ public class LDAPStorageProvider implements UserStorageProvider,
     protected UserModel importUserFromLDAP(KeycloakSession session, RealmModel realm, LDAPObject ldapUser) {
         String ldapUsername = LDAPUtils.getUsername(ldapUser, ldapIdentityStore.getConfig());
         LDAPUtils.checkUuid(ldapUser, ldapIdentityStore.getConfig());
+
+        if (ldapIdentityStore.getConfig().isValidateUsernamePolicy()) {
+            PolicyError error = session.getProvider(UsernamePolicyManagerProvider.class).validate(realm, ldapUsername);
+            if (error != null) {
+                UsernamePolicyNotMetException policyNotMetException = new UsernamePolicyNotMetException(error.getMessage(), ldapUsername);
+                policyNotMetException.setParameters(error.getParameters());
+
+                throw policyNotMetException;
+            }
+        }
 
         UserModel imported = null;
         if (model.isImportEnabled()) {

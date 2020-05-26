@@ -544,6 +544,24 @@ public class UserTest extends AbstractAdminTest {
         response.close();
     }
 
+    @Test
+    public void createUserWithInvalidPolicyUsername() {
+        RealmRepresentation rep = realm.toRepresentation();
+        String usernamePolicy = rep.getUsernamePolicy();
+        rep.setUsernamePolicy("regexPattern(^[^\\<\\>\\\\\\/]*$)");
+        realm.update(rep);
+        UserRepresentation user = new UserRepresentation();
+        user.setUsername("user4\\");
+        user.setEmail("user4@localhost");
+        Response response = realm.users().create(user);
+        assertEquals(400, response.getStatus());
+        ErrorRepresentation error = response.readEntity(ErrorRepresentation.class);
+        Assert.assertEquals("Username policy not met", error.getErrorMessage());
+        rep.setUsernamePolicy(usernamePolicy);
+        realm.update(rep);
+        response.close();
+    }
+
     private List<String> createUsers() {
         List<String> ids = new ArrayList<>();
 

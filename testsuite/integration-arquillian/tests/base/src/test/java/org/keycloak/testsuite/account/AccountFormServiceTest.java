@@ -292,6 +292,13 @@ public class AccountFormServiceTest extends AbstractTestRealmKeycloakTest {
         testRealm().update(testRealm);
     }
 
+    // TODO: test cases
+    private void setUsernamePolicy(String policy) {
+        RealmRepresentation testRealm = testRealm().toRepresentation();
+        testRealm.setUsernamePolicy(policy);
+        testRealm().update(testRealm);
+    }
+
     @Test
     public void changePasswordWithBlankCurrentPassword() {
         changePasswordPage.open();

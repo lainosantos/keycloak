@@ -116,6 +116,11 @@ public class LDAPConfig {
         return Boolean.parseBoolean(validatePPolicy);
     }
 
+    public boolean isValidateUsernamePolicy() {
+        String validatePPolicy = config.getFirst(LDAPConstants.VALIDATE_USERNAME_POLICY);
+        return Boolean.parseBoolean(validatePPolicy);
+    }
+
     public boolean isTrustEmail(){
         String trustEmail = config.getFirst(LDAPConstants.TRUST_EMAIL);
         return Boolean.parseBoolean(trustEmail);

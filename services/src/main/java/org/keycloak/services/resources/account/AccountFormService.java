@@ -360,7 +360,7 @@ public class AccountFormService extends AbstractSecuredLocalService {
 
         event.event(EventType.UPDATE_PROFILE).client(auth.getClient()).user(auth.getUser());
 
-        List<FormMessage> errors = Validation.validateUpdateProfileForm(realm, formData);
+        List<FormMessage> errors = Validation.validateUpdateProfileForm(session, realm, formData);
         if (errors != null && !errors.isEmpty()) {
             setReferrerOnPage();
             return account.setErrors(Status.OK, errors).setProfileFormData(formData).createResponse(AccountPages.ACCOUNT);

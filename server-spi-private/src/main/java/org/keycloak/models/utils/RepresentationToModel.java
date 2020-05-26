@@ -61,33 +61,7 @@ import org.keycloak.keys.KeyProvider;
 import org.keycloak.migration.MigrationProvider;
 import org.keycloak.migration.migrators.MigrateTo8_0_0;
 import org.keycloak.migration.migrators.MigrationUtils;
-import org.keycloak.models.AuthenticationExecutionModel;
-import org.keycloak.models.AuthenticationFlowModel;
-import org.keycloak.models.AuthenticatorConfigModel;
-import org.keycloak.models.BrowserSecurityHeaders;
-import org.keycloak.models.ClaimMask;
-import org.keycloak.models.ClientModel;
-import org.keycloak.models.ClientScopeModel;
-import org.keycloak.models.Constants;
-import org.keycloak.models.FederatedIdentityModel;
-import org.keycloak.models.GroupModel;
-import org.keycloak.models.IdentityProviderMapperModel;
-import org.keycloak.models.IdentityProviderModel;
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.models.LDAPConstants;
-import org.keycloak.models.ModelException;
-import org.keycloak.models.OTPPolicy;
-import org.keycloak.models.PasswordPolicy;
-import org.keycloak.models.ProtocolMapperModel;
-import org.keycloak.models.RealmModel;
-import org.keycloak.models.RequiredActionProviderModel;
-import org.keycloak.models.RoleModel;
-import org.keycloak.models.ScopeContainerModel;
-import org.keycloak.models.UserConsentModel;
-import org.keycloak.models.UserCredentialModel;
-import org.keycloak.models.UserModel;
-import org.keycloak.models.UserProvider;
-import org.keycloak.models.WebAuthnPolicy;
+import org.keycloak.models.*;
 import org.keycloak.models.credential.OTPCredentialModel;
 import org.keycloak.models.credential.PasswordCredentialModel;
 import org.keycloak.models.credential.dto.OTPCredentialData;
@@ -271,6 +245,8 @@ public class RepresentationToModel {
 
         if (rep.getPasswordPolicy() != null)
             newRealm.setPasswordPolicy(PasswordPolicy.parse(session, rep.getPasswordPolicy()));
+        if (rep.getUsernamePolicy() != null)
+            newRealm.setUsernamePolicy(UsernamePolicy.parse(session, rep.getUsernamePolicy()));
         if (rep.getOtpPolicyType() != null) newRealm.setOTPPolicy(toPolicy(rep));
         else newRealm.setOTPPolicy(OTPPolicy.DEFAULT_POLICY);
 
@@ -1117,6 +1093,8 @@ public class RepresentationToModel {
 
         if (rep.getPasswordPolicy() != null)
             realm.setPasswordPolicy(PasswordPolicy.parse(session, rep.getPasswordPolicy()));
+        if (rep.getUsernamePolicy() != null)
+            realm.setUsernamePolicy(UsernamePolicy.parse(session, rep.getUsernamePolicy()));
         if (rep.getOtpPolicyType() != null) realm.setOTPPolicy(toPolicy(rep));
 
         if (rep.getDefaultRoles() != null) {

@@ -205,6 +205,11 @@ public class RealmBuilder {
         return this;
     }
 
+    public RealmBuilder usernamePolicy(String usernamePolicy) {
+        rep.setUsernamePolicy(usernamePolicy);
+        return this;
+    }
+
     public RealmRepresentation build() {
         return rep;
     }

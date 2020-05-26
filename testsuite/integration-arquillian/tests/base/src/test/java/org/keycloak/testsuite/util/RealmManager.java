@@ -46,6 +46,13 @@ public class RealmManager {
         return this;
     }
 
+    public RealmManager usernamePolicy(String usernamePolicy) {
+        RealmRepresentation rep = realm.toRepresentation();
+        rep.setUsernamePolicy(usernamePolicy);
+        realm.update(rep);
+        return this;
+    }
+
     public RealmManager revokeRefreshToken(boolean enable) {
         RealmRepresentation rep = realm.toRepresentation();
         rep.setRevokeRefreshToken(enable);

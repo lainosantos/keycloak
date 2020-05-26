@@ -31,6 +31,8 @@ import org.keycloak.models.ProtocolMapperModel;
 import org.keycloak.models.utils.ModelToRepresentation;
 import org.keycloak.policy.PasswordPolicyProvider;
 import org.keycloak.policy.PasswordPolicyProviderFactory;
+import org.keycloak.policy.UsernamePolicyProvider;
+import org.keycloak.policy.UsernamePolicyProviderFactory;
 import org.keycloak.protocol.ClientInstallationProvider;
 import org.keycloak.protocol.LoginProtocol;
 import org.keycloak.protocol.LoginProtocolFactory;
@@ -40,11 +42,7 @@ import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.provider.ProviderFactory;
 import org.keycloak.provider.ServerInfoAwareProviderFactory;
 import org.keycloak.provider.Spi;
-import org.keycloak.representations.idm.ComponentTypeRepresentation;
-import org.keycloak.representations.idm.ConfigPropertyRepresentation;
-import org.keycloak.representations.idm.PasswordPolicyTypeRepresentation;
-import org.keycloak.representations.idm.ProtocolMapperRepresentation;
-import org.keycloak.representations.idm.ProtocolMapperTypeRepresentation;
+import org.keycloak.representations.idm.*;
 import org.keycloak.representations.info.ClientInstallationRepresentation;
 import org.keycloak.representations.info.MemoryInfoRepresentation;
 import org.keycloak.representations.info.ProfileInfoRepresentation;
@@ -101,6 +99,7 @@ public class ServerInfoAdminResource {
         setBuiltinProtocolMappers(info);
         setClientInstallations(info);
         setPasswordPolicies(info);
+        setUsernamePolicies(info);
         info.setEnums(ENUMS);
         return info;
     }
@@ -289,6 +288,20 @@ public class ServerInfoAdminResource {
             rep.setDefaultValue(factory.getDefaultConfigValue());
             rep.setMultipleSupported(factory.isMultiplSupported());
             info.getPasswordPolicies().add(rep);
+        }
+    }
+
+    private void setUsernamePolicies(ServerInfoRepresentation info) {
+        info.setUsernamePolicies(new LinkedList<>());
+        for (ProviderFactory f : session.getKeycloakSessionFactory().getProviderFactories(UsernamePolicyProvider.class)) {
+            UsernamePolicyProviderFactory factory = (UsernamePolicyProviderFactory) f;
+            UsernamePolicyTypeRepresentation rep = new UsernamePolicyTypeRepresentation();
+            rep.setId(factory.getId());
+            rep.setDisplayName(factory.getDisplayName());
+            rep.setConfigType(factory.getConfigType());
+            rep.setDefaultValue(factory.getDefaultConfigValue());
+            rep.setMultipleSupported(factory.isMultiplSupported());
+            info.getUsernamePolicies().add(rep);
         }
     }
 

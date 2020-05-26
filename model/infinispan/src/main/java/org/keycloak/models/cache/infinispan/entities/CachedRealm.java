@@ -20,20 +20,7 @@ package org.keycloak.models.cache.infinispan.entities;
 import org.keycloak.common.enums.SslRequired;
 import org.keycloak.common.util.MultivaluedHashMap;
 import org.keycloak.component.ComponentModel;
-import org.keycloak.models.AuthenticationExecutionModel;
-import org.keycloak.models.AuthenticationFlowModel;
-import org.keycloak.models.AuthenticatorConfigModel;
-import org.keycloak.models.ClientModel;
-import org.keycloak.models.ClientScopeModel;
-import org.keycloak.models.GroupModel;
-import org.keycloak.models.IdentityProviderMapperModel;
-import org.keycloak.models.IdentityProviderModel;
-import org.keycloak.models.OTPPolicy;
-import org.keycloak.models.PasswordPolicy;
-import org.keycloak.models.RealmModel;
-import org.keycloak.models.RequiredActionProviderModel;
-import org.keycloak.models.RequiredCredentialModel;
-import org.keycloak.models.WebAuthnPolicy;
+import org.keycloak.models.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,6 +84,7 @@ public class CachedRealm extends AbstractExtendableRevisioned {
     protected int actionTokenGeneratedByUserLifespan;
     protected int notBefore;
     protected PasswordPolicy passwordPolicy;
+    protected UsernamePolicy usernamePolicy;
     protected OTPPolicy otpPolicy;
     protected WebAuthnPolicy webAuthnPolicy;
     protected WebAuthnPolicy webAuthnPasswordlessPolicy;
@@ -210,6 +198,7 @@ public class CachedRealm extends AbstractExtendableRevisioned {
         actionTokenGeneratedByUserLifespan = model.getActionTokenGeneratedByUserLifespan();
         notBefore = model.getNotBefore();
         passwordPolicy = model.getPasswordPolicy();
+        usernamePolicy = model.getUsernamePolicy();
         otpPolicy = model.getOTPPolicy();
         webAuthnPolicy = model.getWebAuthnPolicy();
         webAuthnPasswordlessPolicy = model.getWebAuthnPolicyPasswordless();
@@ -509,6 +498,10 @@ public class CachedRealm extends AbstractExtendableRevisioned {
 
     public PasswordPolicy getPasswordPolicy() {
         return passwordPolicy;
+    }
+
+    public UsernamePolicy getUsernamePolicy() {
+        return usernamePolicy;
     }
 
     public boolean isIdentityFederationEnabled() {
